@@ -8,7 +8,7 @@ const { getMatch, getSort, getSelect } = require("../utils/queryUtils")
 const { SUPER_USER } = require('../constants/Roles')
 
 const PasswordError = require("../errors/PasswordError");
-const UnauthorizedError = require("../errors/UnauthorizedError");
+const UnauthorizedRoleError = require("../errors/UnauthorizedRoleError");
 
 const s3 = new aws.S3();
 
@@ -21,7 +21,7 @@ class UserController {
 	async create(req, res, next) {
 		try {
 			if(req.user.role !== SUPER_USER)
-			throw new UnauthorizedError(SUPER_USER)
+			throw new UnauthorizedRoleError(SUPER_USER)
 
 			let data = await User.create(req.body)
 			return res.json(data)
@@ -33,7 +33,7 @@ class UserController {
 	async createMany(req, res, next) {
 		try {
 			if(req.user.role !== "ROLE_SUPER_USER")
-			throw new UnauthorizedError()
+			throw new UnauthorizedRoleError()
 
 			let data = await User.createMany(req.body)
 			return res.json(data)

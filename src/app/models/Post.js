@@ -1,8 +1,9 @@
 const mongoose = require("mongoose")
-const aws = require('aws-sdk');
-const { promisify } = require('util');
 const fs = require('fs');
+const aws = require('aws-sdk');
 const path = require('path');
+const { promisify } = require('util');
+const random = require('mongoose-simple-random');
 
 const s3 = new aws.S3();
 const ObjectId = mongoose.Schema.ObjectId;
@@ -41,6 +42,8 @@ const PostSchema = new mongoose.Schema(
 		timestamps: true
 	}
 )
+
+PostSchema.plugin(random)
 
 PostSchema.pre('save', function() {
 	if (!this.url) {

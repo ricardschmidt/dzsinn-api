@@ -1,9 +1,9 @@
 class UnauthorizedError extends Error {
-	constructor(role) {
-		super(`${role} authentication is necessary!`);
+	constructor() {
+		super(`Owner authentication is necessary!`);
 		this.status = 401
 		this.name = this.constructor.name;
-		this.userMessage = `É necessária autenticação ${role ? `de ${role}!` : '!'}`
+		this.userMessage = `É necessária autenticação do proprietário!`
 	}
 }
 

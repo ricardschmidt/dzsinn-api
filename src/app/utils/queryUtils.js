@@ -1,7 +1,11 @@
 module.exports = {
 	getMatch: (req) => {
 		return Object.entries(req.query).reduce((acc, [key, value]) => {
-			acc[key] = value;
+			if(value === "null") {
+				acc[key] = { $eq: null };
+			} else {
+				acc[key] = value;
+			}
 			return acc;
 		}, {});
 	},
