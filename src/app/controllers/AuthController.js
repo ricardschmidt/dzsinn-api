@@ -78,5 +78,9 @@ module.exports = {
 		} catch (error) {
 			next(error)
 		}
+	},
+
+	async authenticationCheck(req, res, next) {
+		req.sendStatus(200)
 	}
 };

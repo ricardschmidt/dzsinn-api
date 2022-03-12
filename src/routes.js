@@ -23,6 +23,8 @@ routes.post('/signup', AuthController.signup);
 routes.post('/signin', AuthController.signin);
 
 /* Endpoints com Autenticação */
+routes.post('/auth-check', AuthController.authenticationCheck);
+
 routes.post("/users", authMiddleware, UserController.create);
 routes.post("/users/many", authMiddleware, UserController.createMany);
 routes.put("/users", authMiddleware, UserController.updateById);
