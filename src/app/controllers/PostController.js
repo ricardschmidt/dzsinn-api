@@ -4,9 +4,12 @@ const fs = require('fs');
 const path = require('path');
 const { promisify } = require('util');
 
+const UnauthorizedError = require("../errors/UnauthorizedError")
+const PurchasedPostError = require("../errors/PurchasedPostError");
+
 const Post = require("../models/Post")
 const User = require("../models/User")
-const Event = require("../models/Event")
+const Event = require("../models/Event");
 
 
 class PostController {
@@ -48,13 +51,25 @@ class PostController {
 
 	async find(req, res, next) {
 		try {
-			let {pageSize = 0, page = 0, sort, select, expand } = req.query
-			let data = Post.find(
-				{...getMatch(req)}, getSelect(select)
-				).sort(getSort(sort))
-				.limit(pageSize)
-				.skip(pageSize * page);
-			return res.json(expand ? await data.populate('user') : await data)
+			let {pageSize = 0, page = 0, sort, select, expand, random } = req.query
+			if(random) {
+				Post.findRandom(
+					{ bought: { $eq: null }},
+					{},
+					{limit: pageSize, populate: expand ? "user" : ""},
+					function(err, results) {
+						if (!err) {
+						return res.json(results)
+					}
+				})
+			} else {
+				let data = Post.find(
+					{...getMatch(req)}, getSelect(select)
+					).sort(getSort(sort))
+					.limit(pageSize)
+					.skip(pageSize * page);
+				return res.json(expand ? await data.populate('user') : await data)
+			}
 		} catch (error) {
 			next(error)
 		}
@@ -76,6 +91,10 @@ class PostController {
 			let event = await Event.findById(eventId)
 
 			let data = await Post.findOne({_id: req.params.id});
+
+			if(data.user.toString() !== req.user.id)
+			throw new UnauthorizedError()
+
 			if(title)
 			data.title = title
 			if(subtitle)
@@ -112,6 +131,22 @@ class PostController {
 
 			return res.json(data)
 		} catch(error) {
+			next(error)
+		}
+	}
+
+	async updateBought(req, res, next) {
+		try {
+			let post = await Post.findById(req.params.id)
+
+			if(post.bought)
+			throw new PurchasedPostError()
+
+			post.bought = req.user.id
+			await post.save()
+			res.json(post)
+
+		} catch (error) {
 			next(error)
 		}
 	}

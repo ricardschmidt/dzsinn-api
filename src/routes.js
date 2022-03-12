@@ -31,6 +31,7 @@ routes.put("/users/password", authMiddleware, UserController.updatePassword);
 
 routes.post("/posts", authMiddleware, multer(multerConfig).single('file'), PostController.create);
 routes.put("/posts/:id", authMiddleware, multer(multerConfig).single('file'), PostController.updateById);
+routes.put("/posts/buy/:id", authMiddleware, multer(multerConfig).single('file'), PostController.updateBought);
 routes.delete("/posts/:id", authMiddleware, PostController.remove);
 
 routes.use(function(req, res) {
