@@ -1,4 +1,4 @@
-class ValidationError extends Error {
+class TokenError extends Error {
 	constructor(message, userMessage) {
 		super(message);
 		this.status = 401
@@ -7,4 +7,4 @@ class ValidationError extends Error {
 	}
 }
 
-module.exports = ValidationError
+module.exports = TokenError
