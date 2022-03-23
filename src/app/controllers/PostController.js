@@ -16,7 +16,7 @@ class PostController {
 
 	async create(req, res, next) {
 		try {
-			let { title, subtitle, description, link, eventId } = req.body;
+			let { title, subtitle, link, eventId } = req.body;
 			let {originalname, size, key, location: url = ''} = req.file;
 
 			let event = await Event.findById(eventId)
@@ -25,13 +25,12 @@ class PostController {
 			let data = await Post.create( {
 				title,
 				subtitle,
-				description,
 				link,
 				originalname,
 				size,
 				key,
 				url,
-				user: user,
+				user: user._id,
 				event: event
 			})
 
@@ -41,10 +40,11 @@ class PostController {
 			}
 
 			user.posts.push(data)
-			user.save()
+			await user.save()
 
 			return res.json(data)
 		} catch (error) {
+			console.log(error)
 			next(error)
 		}
 	}
