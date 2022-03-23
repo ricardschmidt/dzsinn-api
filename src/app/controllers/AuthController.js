@@ -81,6 +81,6 @@ module.exports = {
 	},
 
 	async authenticationCheck(req, res, next) {
-		req.sendStatus(200)
+		res.sendStatus(200)
 	}
 };
