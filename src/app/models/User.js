@@ -42,7 +42,7 @@ const UserSchema = new mongoose.Schema(
 )
 
 UserSchema.pre('save', async function (next) {
-	if (!this.url) {
+	if (!this.image.url) {
 		this.image.url = `${process.env.APP_URL}/files/${this.image.key}`;
 	}
 	if (this.password) {
