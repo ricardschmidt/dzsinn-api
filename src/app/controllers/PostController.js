@@ -6,6 +6,7 @@ const { promisify } = require('util');
 
 const UnauthorizedError = require("../errors/UnauthorizedError")
 const PurchasedPostError = require("../errors/PurchasedPostError");
+const UserNotFoundError = require("../errors/UserNotFoundError");
 
 const Post = require("../models/Post")
 const User = require("../models/User")
@@ -80,6 +81,38 @@ class PostController {
 			let data = await Post.find({user: req.params.id});
 			return res.json(data)
 		} catch(error) {
+			next(error)
+		}
+	}
+
+	async findByUsername(req, res, next) {
+		try {
+			let { username } = req.params
+			let { pageSize = 0, page = 0, sort, select, expand, random } = req.query
+			if(random) {
+				Post.findRandom(
+					{ bought: { $eq: null }},
+					{},
+					{limit: pageSize, populate: expand ? "user" : ""},
+					function(err, results) {
+						if (!err) {
+						return res.json(results)
+					}
+				})
+			} else {
+				let user
+
+				if(username) user = await User.findOne({ username: username })
+				if(!user) throw new UserNotFoundError()
+
+				let data = Post.find(
+					{ user: user._id, ...getMatch(req) }, getSelect(select)
+					).sort(getSort(sort))
+					.limit(pageSize)
+					.skip(pageSize * page);
+				return res.json(expand ? await data.populate('user') : await data)
+			}
+		} catch (error) {
 			next(error)
 		}
 	}

@@ -43,7 +43,11 @@ const UserSchema = new mongoose.Schema(
 
 UserSchema.pre('save', async function (next) {
 	if (!this.image.url) {
-		this.image.url = `${process.env.APP_URL}/files/${this.image.key}`;
+		if(!this.image.key) {
+			this.image.url = "https://dzsinn.s3.amazonaws.com/avatar/jin-avatar.jpeg"
+		} else {
+			this.image.url = `${process.env.APP_URL}/files/${this.image.key}`;
+		}
 	}
 	if (this.password) {
 		const hash = await bcrypt.hash(this.password, 10);

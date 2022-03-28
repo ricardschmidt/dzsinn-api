@@ -27,7 +27,7 @@ const storegeTypes = {
 		key: (req, file, cb) => {
 			crypto.randomBytes(16, (err, hash) => {
 				if(err) cb(err);
-				file.key = `dzsinn/posts/${hash.toString('hex')}-${file.originalname}`;
+				file.key = `${process.env.BUCKET_FOLDER}${req.url === "/users/image" ? "avatar/" : "posts/"}${hash.toString('hex')}-${file.originalname}`;
 				cb(null, file.key)
 			})
 		}

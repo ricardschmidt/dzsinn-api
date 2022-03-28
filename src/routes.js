@@ -13,7 +13,8 @@ routes.get("/users", UserController.find);
 routes.get("/users/:id", UserController.findById);
 
 routes.get("/posts", PostController.find);
-routes.get("/posts/:id", PostController.findByUserId);
+routes.get("/posts/:username", PostController.findByUsername);
+routes.get("/users/:id/posts", PostController.findByUserId);
 
 routes.get("/events", EventController.find);
 routes.get("/events/count/:id", EventController.countById);
